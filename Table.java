@@ -30,4 +30,7 @@ public class Table {
         }
         addRow(row);
     }
+    public ArrayList<Row> select(){
+        return getRows();
+    }
 }
