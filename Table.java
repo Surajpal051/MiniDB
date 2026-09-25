@@ -30,7 +30,16 @@ public class Table {
         }
         addRow(row);
     }
-    public ArrayList<Row> select(){
-        return getRows();
+    public ArrayList<ArrayList<Object>> select(String... keys){
+        ArrayList<ArrayList<Object>> result = new ArrayList<>();
+        rows = getRows();
+        rows.forEach(row -> {
+            ArrayList<Object> item = new ArrayList<>();
+            for (String key : keys) {
+        item.add(row.getValue(key));
+    }
+            result.add(item);
+        });
+        return result;
     }
 }

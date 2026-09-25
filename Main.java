@@ -20,6 +20,7 @@ public class Main {
         map.put("Year",3);
         students.insert(map);
         System.out.println(students.getRows());
-        System.out.println(students.select());
+        System.out.println(students.select("ID","Name","Year"));
+        System.out.println(row1.getValue("Name"));
     }
 }

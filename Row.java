@@ -10,6 +10,9 @@ public class Row {
     public HashMap<String, Object> getRowData(){
         return rowData;
     }
+    public Object getValue(String key){
+        return rowData.get(key);
+    }
     @Override
     public String toString() {
         return rowData.toString();
