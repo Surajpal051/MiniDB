@@ -22,5 +22,11 @@ public class Main {
         System.out.println(students.getRows());
         System.out.println(students.select("ID","Name","Year"));
         System.out.println(row1.getValue("Name"));
+        System.out.println(students.selectWhere("ID",2));
+        System.out.println(students.selectWhere("ID",99));
+        students.deleteWhere("ID", 2);
+        System.out.println(students.getRows());
+        students.updateWhere("ID", 1, "Year", 3);
+        System.out.println(students.getRows());
     }
 }

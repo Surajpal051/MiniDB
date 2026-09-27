@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 public class Table {
     private String name;
     private ArrayList<String> attributes = new ArrayList<>();
@@ -41,5 +42,31 @@ public class Table {
             result.add(item);
         });
         return result;
+    }
+    public ArrayList<Row> selectWhere(String key, Object value){
+        ArrayList<Row> result = new ArrayList<>();
+        rows.forEach(row -> {
+            if (row.getValue(key).equals(value)){
+                result.add(row);
+            }
+        });
+        return result;
+    }
+    public void deleteWhere(String key, Object value){
+        Iterator<Row> iterator = rows.iterator();
+        while(iterator.hasNext()){
+            Row row = iterator.next();
+            if(row.getValue(key).equals(value)){
+                iterator.remove();
+                System.out.println("Removed succesfully");
+            }
+        }
+    }
+    public void updateWhere(String key, Object value, String newKey, Object newValue){
+        rows.forEach(row ->{
+            if(row.getValue(key).equals(value)){
+                row.addValue(newKey,newValue);
+            }
+        });
     }
 }
