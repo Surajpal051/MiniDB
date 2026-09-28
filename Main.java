@@ -28,5 +28,7 @@ public class Main {
         System.out.println(students.getRows());
         students.updateWhere("ID", 1, "Year", 3);
         System.out.println(students.getRows());
+        Database db = new Database("Students");
+        db.addTable(students);
     }
 }
