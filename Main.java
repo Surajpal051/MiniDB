@@ -30,5 +30,19 @@ public class Main {
         System.out.println(students.getRows());
         Database db = new Database("Students");
         db.addTable(students);
+        Table table = db.findTable("students");
+        if (table == null){
+            System.out.println("Table not found");
+        }
+        else{
+            System.out.println(table.getName());
+        }
+        Table employees = new Table("employees");
+        db.addTable(employees);
+        System.out.println(db.dropTable("employees"));
+        db.findTable("employees");
+        System.out.println(db.dropTable("employees"));
+        db.addTable(employees);
+        System.out.println(db.listTables());
     }
 }
