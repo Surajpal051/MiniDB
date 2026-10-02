@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         Table students = new Table("students");
@@ -44,5 +45,15 @@ public class Main {
         System.out.println(db.dropTable("employees"));
         db.addTable(employees);
         System.out.println(db.listTables());
+        ArrayList<String> attributes = new ArrayList<>();
+        attributes.add("ID");
+        attributes.add("Name");
+        attributes.add("Class");
+        Command command = new Command(CommandType.CREATE_TABLE,
+        "students",
+        attributes);
+        System.out.println(command.getType());
+        System.out.println(command.getTableAtrributes());
+        System.out.println(command.getTableName());
     }
 }
