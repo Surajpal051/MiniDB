@@ -34,4 +34,7 @@ public class Database{
         });
         return names;
     }
+    public String getName(){
+        return name;
+    }
     }

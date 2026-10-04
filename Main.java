@@ -50,10 +50,23 @@ public class Main {
         attributes.add("Name");
         attributes.add("Class");
         Command command = new Command(CommandType.CREATE_TABLE,
-        "students",
+        "College",
         attributes);
         System.out.println(command.getType());
         System.out.println(command.getTableAtrributes());
         System.out.println(command.getTableName());
+        DatabaseManager manager = new DatabaseManager();
+        Database db1 = new Database("CollegeDB");
+        Database db2 = new Database("SchoolDB");
+        manager.addDatabase(db1);
+        manager.addDatabase(db2);
+        System.out.println(db1.getName());
+        System.out.println(manager.findDatabase("CollegeDB"));
+        manager.useDatabase("CollegeDB");
+        System.out.println(manager.getCurrentDatabase().getName());
+        CommandExecutor execute = new CommandExecutor(db);
+        execute.executeCreateTable(command);
+        System.out.println(db.listTables());
+        System.out.println(db.findTable("College").getAttributes());
     }
 }
