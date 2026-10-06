@@ -68,5 +68,16 @@ public class Main {
         execute.executeCreateTable(command);
         System.out.println(db.listTables());
         System.out.println(db.findTable("College").getAttributes());
+        ArrayList<Object> values = new ArrayList<>();
+        values.add(1);
+        values.add("Rahul");
+        values.add(2);
+        Command insertcommand = new Command(CommandType.INSERT,
+        "students",
+        null);
+        insertcommand.setValues(values);
+        System.out.println(insertcommand.getValues());
+        execute.executeInsert(insertcommand);
+        System.out.println(db.findTable("students").getRows());
     }
 }

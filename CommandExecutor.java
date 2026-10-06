@@ -15,4 +15,15 @@ class CommandExecutor{
         currentDatabase.addTable(table);
         
     }
+    public void executeInsert(Command command){
+        String tableName = command.getTableName();
+        Table table = currentDatabase.findTable(tableName);
+        ArrayList<Object> values = command.getValues();
+        ArrayList<String> attributes = table.getAttributes();
+        Row row = new Row();
+        for (int i = 0 ; i < attributes.size() ; i++){
+            row.addValue(attributes.get(i),values.get(i));
+        }
+        table.addRow(row);
+    }
 }
