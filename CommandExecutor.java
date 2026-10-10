@@ -26,4 +26,10 @@ class CommandExecutor{
         }
         table.addRow(row);
     }
+    public ArrayList<ArrayList<Object>> executeSelect(Command command){
+        String tableName = command.getTableName();
+        Table table = currentDatabase.findTable(tableName);
+        ArrayList<String> attributes = command.getTableAtrributes();
+        return table.select(attributes.toArray(new String[0]));
+    }
 }
