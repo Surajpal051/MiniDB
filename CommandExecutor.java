@@ -30,6 +30,14 @@ class CommandExecutor{
         String tableName = command.getTableName();
         Table table = currentDatabase.findTable(tableName);
         ArrayList<String> attributes = command.getTableAtrributes();
+        if (command.getConditionKey() != null){
+            String key = command.getConditionKey();
+            Object value = command.getConditionValue();
+            ArrayList<Row> matchingRows = table.selectWhere(key,value); 
+        }
+        if (attributes.isEmpty()){
+            attributes = table.getAttributes();
+        }
         return table.select(attributes.toArray(new String[0]));
     }
 }

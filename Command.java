@@ -4,6 +4,8 @@ class Command {
     private String tableName;
     private ArrayList<String> attributes;
     private ArrayList<Object> values;
+    private String conditionKey;
+    private Object conditionValue;
 
     public Command(CommandType type, String tableName, ArrayList<String> attributes){
         this.type = type;
@@ -24,5 +26,15 @@ class Command {
     }
     public ArrayList<Object> getValues(){
         return values;
+    }
+    public void setCondition(String key, Object value){
+        this.conditionKey = key;
+        this.conditionValue = value;
+    }
+    public String getConditionKey(){
+        return conditionKey;
+    }
+    public Object getConditionValue(){
+        return conditionValue;
     }
 }

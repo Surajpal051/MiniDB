@@ -80,9 +80,10 @@ public class Main {
         execute.executeInsert(insertcommand);
         System.out.println(db.findTable("students").getRows());
         ArrayList<String> attributes1 = new ArrayList<>();
-        attributes1.add("ID");
-        attributes1.add("Year");
         Command selectCommand = new Command(CommandType.SELECT,"students",attributes1);
         System.out.println(execute.executeSelect(selectCommand));
+        selectCommand.setCondition("Year", 3);
+        System.out.println(selectCommand.getConditionKey());
+        System.out.println(selectCommand.getConditionValue());
     }
 }
