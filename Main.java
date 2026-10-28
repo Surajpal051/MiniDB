@@ -4,10 +4,12 @@ public class Main {
     public static void main(String[] args) {
         Table students = new Table("students");
         System.out.println(students.getName());
-        students.addAttribute("ID");
-        students.addAttribute("Name");
-        students.addAttribute("Year");
+        students.addAttribute(new Column("ID", "INT"));
+        students.addAttribute(new Column("Name", "VARCHAR"));
+        students.addAttribute(new Column("Year", "INT"));
         System.out.println(students.getAttributes());
+        System.out.println(students.getColumnType("Year"));
+        System.out.println(students.getColumnType("Name"));
         Row row1 = new Row();
         students.addRow(row1);
         row1.addValue("ID",1);
@@ -85,5 +87,16 @@ public class Main {
         selectCommand.setCondition("Year", 3);
         System.out.println(selectCommand.getConditionKey());
         System.out.println(selectCommand.getConditionValue());
+        System.out.println(db.findTable("students").getRows());
+        System.out.println(execute.executeSelect(selectCommand));
+        SQLParser parser = new SQLParser();
+        Command command2 = parser.parse("SELECT * FROM students;");
+        System.out.println(execute.executeSelect(command2));
+        Command command3 = parser.parse("SELECT  Name FROM students;");
+        System.out.println(execute.executeSelect(command3));
+
+        Command c1 = parser.parse("SELECT Name FROM students WHERE Year = 3;");
+        System.out.println(execute.executeSelect(c1));
+
     }
 }

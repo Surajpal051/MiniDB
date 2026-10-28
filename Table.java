@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 public class Table {
     private String name;
-    private ArrayList<String> attributes = new ArrayList<>();
+    private ArrayList<Column> columns = new ArrayList<>();
     private ArrayList<Row> rows = new ArrayList<>();
     public Table(String name){
         this.name = name;
@@ -12,10 +12,14 @@ public class Table {
     public String getName() {
         return name;
     }
-    public void addAttribute(String name){
-        attributes.add(name);
+    public void addAttribute(Column column){
+        columns.add(column);
     }
     public ArrayList<String> getAttributes(){
+        ArrayList<String> attributes = new ArrayList<>();
+        for (Column column : columns){
+            attributes.add(column.getName());
+        }
         return attributes;
     }
     public void addRow(Row row){
@@ -68,5 +72,13 @@ public class Table {
                 row.addValue(newKey,newValue);
             }
         });
+    }
+    public String getColumnType(String name){
+        for (Column column : columns){
+            if (column.getName().equals(name)){
+                return column.getType();
+            }
+        }
+        return null;
     }
 }
