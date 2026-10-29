@@ -11,10 +11,10 @@ public class Main {
         System.out.println(students.getColumnType("Year"));
         System.out.println(students.getColumnType("Name"));
         Row row1 = new Row();
-        students.addRow(row1);
         row1.addValue("ID",1);
         row1.addValue("Name","Rahul");
         row1.addValue("Year",2);
+        students.addRow(row1);
         System.out.println(row1.getRowData());
         System.out.println(students.getRows());
         HashMap<String, Object> map = new HashMap<>();
@@ -51,9 +51,15 @@ public class Main {
         attributes.add("ID");
         attributes.add("Name");
         attributes.add("Class");
+        ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("ID", "INT"));
+        columns.add(new Column("Name", "VARCHAR"));
+        columns.add(new Column("Class", "VARCHAR"));
+
         Command command = new Command(CommandType.CREATE_TABLE,
         "College",
         attributes);
+        command.setColumns(columns);
         System.out.println(command.getType());
         System.out.println(command.getTableAtrributes());
         System.out.println(command.getTableName());
@@ -89,14 +95,26 @@ public class Main {
         System.out.println(selectCommand.getConditionValue());
         System.out.println(db.findTable("students").getRows());
         System.out.println(execute.executeSelect(selectCommand));
-        SQLParser parser = new SQLParser();
+        SQLParser parser = new SQLParser(db);
         Command command2 = parser.parse("SELECT * FROM students;");
         System.out.println(execute.executeSelect(command2));
-        Command command3 = parser.parse("SELECT  Name FROM students;");
-        System.out.println(execute.executeSelect(command3));
 
-        Command c1 = parser.parse("SELECT Name FROM students WHERE Year = 3;");
-        System.out.println(execute.executeSelect(c1));
+try {
+    Command c3 = parser.parse(
+        "SELECT Name FROM students WHERE Year = Rahul;"
+    );
+    System.out.println(execute.executeSelect(c3));
+} catch (IllegalArgumentException e) {
+    System.out.println("c3 rejected: " + e.getMessage());
+}
 
+try {
+    Command c4 = parser.parse(
+        "SELECT Name FROM students WHERE Name = 3;"
+    );
+    System.out.println(execute.executeSelect(c4));
+} catch (IllegalArgumentException e) {
+    System.out.println("c4 rejected: " + e.getMessage());
+}
     }
 }

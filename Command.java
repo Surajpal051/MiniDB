@@ -3,6 +3,7 @@ class Command {
     private CommandType type;
     private String tableName;
     private ArrayList<String> attributes;
+    private ArrayList<Column> columns;
     private ArrayList<Object> values;
     private String conditionKey;
     private Object conditionValue;
@@ -14,6 +15,12 @@ class Command {
     }
     public void setValues(ArrayList<Object> values){
         this.values = values;
+    }
+    public void setColumns(ArrayList<Column> columns){
+        this.columns = columns;
+    }
+    public ArrayList<Column> getColumns(){
+        return columns;
     }
     public CommandType getType(){
         return type;
