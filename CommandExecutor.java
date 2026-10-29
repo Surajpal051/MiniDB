@@ -5,6 +5,14 @@ class CommandExecutor{
     public CommandExecutor(Database database){
         this.currentDatabase = database;
     }
+    public void setCurrentDatabase(Database database){
+        if (database == null) {
+            throw new IllegalArgumentException(
+                "Select a database first using USE"
+            );
+        }
+        this.currentDatabase = database;
+    }
     public void executeCreateTable(Command command){
         String tableName = command.getTableName();
         ArrayList<Column> columns = command.getColumns();
@@ -70,4 +78,80 @@ class CommandExecutor{
         }
         return table.select(attributes.toArray(new String[0]));
     }
+    public void executeDelete(Command command){
+        Table table = currentDatabase.findTable(command.getTableName());
+        if (table == null){
+            throw new IllegalArgumentException("Table not found : "+command.getTableName());
+        }
+        if (command.getConditionKey() == null){
+            throw new IllegalArgumentException("DELETE requires a WHERE condition");
+        }
+        table.deleteWhere(command.getConditionKey(),command.getConditionValue());
+    }
+    public void executeUpdate(Command command) {
+    Table table = currentDatabase.findTable(command.getTableName());
+
+    if (table == null) {
+        throw new IllegalArgumentException(
+            "Table not found: " + command.getTableName()
+        );
+    }
+
+    if (command.getConditionKey() == null) {
+        throw new IllegalArgumentException(
+            "UPDATE requires a WHERE condition"
+        );
+    }
+
+    if (command.getUpdateKey() == null) {
+        throw new IllegalArgumentException(
+            "Missing column to update"
+        );
+    }
+
+    table.updateWhere(
+        command.getConditionKey(),
+        command.getConditionValue(),
+        command.getUpdateKey(),
+        command.getUpdateValue()
+    );
+}
+    
+public Object execute(Command command) {
+    if (currentDatabase == null){
+        throw new IllegalArgumentException (
+            "No database selected. Use a database first."
+        );
+    }
+    if (command == null) {
+        throw new IllegalArgumentException("Command cannot be null");
+    }
+
+    switch (command.getType()) {
+        case SELECT:
+            return executeSelect(command);
+
+        case INSERT:
+            executeInsert(command);
+            return null;
+
+        case UPDATE:
+            executeUpdate(command);
+            return null;
+
+        case DELETE:
+            executeDelete(command);
+            return null;
+
+        case CREATE_TABLE:
+            executeCreateTable(command);
+            return null;
+
+        default:
+            throw new IllegalArgumentException(
+                "Unsupported command type"
+            );
+    }
+}
+
 }

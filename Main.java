@@ -1,120 +1,126 @@
-import java.util.HashMap;
-import java.util.ArrayList;
+
+import java.util.Scanner;
+
 public class Main {
+
     public static void main(String[] args) {
-        Table students = new Table("students");
-        System.out.println(students.getName());
-        students.addAttribute(new Column("ID", "INT"));
-        students.addAttribute(new Column("Name", "VARCHAR"));
-        students.addAttribute(new Column("Year", "INT"));
-        System.out.println(students.getAttributes());
-        System.out.println(students.getColumnType("Year"));
-        System.out.println(students.getColumnType("Name"));
-        Row row1 = new Row();
-        row1.addValue("ID",1);
-        row1.addValue("Name","Rahul");
-        row1.addValue("Year",2);
-        students.addRow(row1);
-        System.out.println(row1.getRowData());
-        System.out.println(students.getRows());
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("ID", 2);
-        map.put("Name","Sohan");
-        map.put("Year",3);
-        students.insert(map);
-        System.out.println(students.getRows());
-        System.out.println(students.select("ID","Name","Year"));
-        System.out.println(row1.getValue("Name"));
-        System.out.println(students.selectWhere("ID",2));
-        System.out.println(students.selectWhere("ID",99));
-        students.deleteWhere("ID", 2);
-        System.out.println(students.getRows());
-        students.updateWhere("ID", 1, "Year", 3);
-        System.out.println(students.getRows());
-        Database db = new Database("Students");
-        db.addTable(students);
-        Table table = db.findTable("students");
-        if (table == null){
-            System.out.println("Table not found");
-        }
-        else{
-            System.out.println(table.getName());
-        }
-        Table employees = new Table("employees");
-        db.addTable(employees);
-        System.out.println(db.dropTable("employees"));
-        db.findTable("employees");
-        System.out.println(db.dropTable("employees"));
-        db.addTable(employees);
-        System.out.println(db.listTables());
-        ArrayList<String> attributes = new ArrayList<>();
-        attributes.add("ID");
-        attributes.add("Name");
-        attributes.add("Class");
-        ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column("ID", "INT"));
-        columns.add(new Column("Name", "VARCHAR"));
-        columns.add(new Column("Class", "VARCHAR"));
-
-        Command command = new Command(CommandType.CREATE_TABLE,
-        "College",
-        attributes);
-        command.setColumns(columns);
-        System.out.println(command.getType());
-        System.out.println(command.getTableAtrributes());
-        System.out.println(command.getTableName());
         DatabaseManager manager = new DatabaseManager();
-        Database db1 = new Database("CollegeDB");
-        Database db2 = new Database("SchoolDB");
-        manager.addDatabase(db1);
-        manager.addDatabase(db2);
-        System.out.println(db1.getName());
-        System.out.println(manager.findDatabase("CollegeDB"));
-        manager.useDatabase("CollegeDB");
-        System.out.println(manager.getCurrentDatabase().getName());
-        CommandExecutor execute = new CommandExecutor(db);
-        execute.executeCreateTable(command);
-        System.out.println(db.listTables());
-        System.out.println(db.findTable("College").getAttributes());
-        ArrayList<Object> values = new ArrayList<>();
-        values.add(1);
-        values.add("Rahul");
-        values.add(2);
-        Command insertcommand = new Command(CommandType.INSERT,
-        "students",
-        null);
-        insertcommand.setValues(values);
-        System.out.println(insertcommand.getValues());
-        execute.executeInsert(insertcommand);
-        System.out.println(db.findTable("students").getRows());
-        ArrayList<String> attributes1 = new ArrayList<>();
-        Command selectCommand = new Command(CommandType.SELECT,"students",attributes1);
-        System.out.println(execute.executeSelect(selectCommand));
-        selectCommand.setCondition("Year", 3);
-        System.out.println(selectCommand.getConditionKey());
-        System.out.println(selectCommand.getConditionValue());
-        System.out.println(db.findTable("students").getRows());
-        System.out.println(execute.executeSelect(selectCommand));
-        SQLParser parser = new SQLParser(db);
-        Command command2 = parser.parse("SELECT * FROM students;");
-        System.out.println(execute.executeSelect(command2));
+        CommandExecutor executor = new CommandExecutor(null);
+        Scanner scanner = new Scanner(System.in);
 
-try {
-    Command c3 = parser.parse(
-        "SELECT Name FROM students WHERE Year = Rahul;"
-    );
-    System.out.println(execute.executeSelect(c3));
-} catch (IllegalArgumentException e) {
-    System.out.println("c3 rejected: " + e.getMessage());
-}
+        System.out.println("================================");
+        System.out.println("          MiniDB v0.2");
+        System.out.println("================================");
+        System.out.println("Commands: CREATE DATABASE, SHOW DATABASES,");
+        System.out.println("          USE, SHOW TABLES, exit");
+        System.out.println();
 
-try {
-    Command c4 = parser.parse(
-        "SELECT Name FROM students WHERE Name = 3;"
-    );
-    System.out.println(execute.executeSelect(c4));
-} catch (IllegalArgumentException e) {
-    System.out.println("c4 rejected: " + e.getMessage());
-}
+        while (true) {
+            Database current = manager.getCurrentDatabase();
+
+            if (current == null) {
+                System.out.print("minidb> ");
+            } else {
+                System.out.print(
+                    "minidb[" + current.getName() + "]> "
+                );
+            }
+
+            if (!scanner.hasNextLine()) {
+                break;
+            }
+
+            String query = scanner.nextLine().trim();
+
+            if (query.isEmpty()) {
+                continue;
+            }
+
+            if (query.equalsIgnoreCase("exit")
+                    || query.equalsIgnoreCase("quit")) {
+                System.out.println("Goodbye!");
+                break;
+            }
+
+            try {
+                String sql = query;
+
+                if (sql.endsWith(";")) {
+                    sql = sql.substring(0, sql.length() - 1).trim();
+                }
+
+                if (sql.matches("(?is)^CREATE\\s+DATABASE\\s+.*")) {
+                    String name = sql.replaceFirst(
+                        "(?is)^CREATE\\s+DATABASE\\s+", ""
+                    ).trim();
+
+                    if (!name.matches("[A-Za-z_][A-Za-z0-9_]*")) {
+                        throw new IllegalArgumentException(
+                            "Invalid database name"
+                        );
+                    }
+
+                    manager.addDatabase(new Database(name));
+                    System.out.println(
+                        "Database created: " + name
+                    );
+                } else if (sql.equalsIgnoreCase("SHOW DATABASES")) {
+                    System.out.println(manager.listDatabases());
+                } else if (sql.matches("(?is)^USE\\s+.*")) {
+                    String name = sql.replaceFirst(
+                        "(?is)^USE\\s+", ""
+                    ).trim();
+
+                    manager.useDatabase(name);
+                    executor.setCurrentDatabase(
+                        manager.getCurrentDatabase()
+                    );
+
+                    System.out.println(
+                        "Using database: " + name
+                    );
+                } else if (sql.equalsIgnoreCase("SHOW TABLES")) {
+                    if (manager.getCurrentDatabase() == null) {
+                        throw new IllegalArgumentException(
+                            "Select a database first using USE"
+                        );
+                    }
+
+                    System.out.println(
+                        manager.getCurrentDatabase().listTables()
+                    );
+                } else {
+                    if (manager.getCurrentDatabase() == null) {
+                        throw new IllegalArgumentException(
+                            "Create and USE a database first"
+                        );
+                    }
+
+                    SQLParser parser = new SQLParser(
+                        manager.getCurrentDatabase()
+                    );
+
+                    Command command = parser.parse(query);
+                    Object result = executor.execute(command);
+
+                    if (command.getType() == CommandType.SELECT) {
+                        System.out.println(result);
+                    } else {
+                        System.out.println("Query executed successfully.");
+                    }
+                }
+
+            } catch (IllegalArgumentException e) {
+                System.out.println("ERROR: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println(
+                    "Unexpected error: " + e.getMessage()
+                );
+            }
+
+            System.out.println();
+        }
+
+        scanner.close();
     }
 }
